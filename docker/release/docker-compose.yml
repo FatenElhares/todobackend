@@ -27,7 +27,7 @@ webroot:
 
 
 test:
-  image: faten/todobackend-specs
+  image: fatenhrs/todobackend-specs
   links:
     - nginx
   environment:
@@ -37,17 +37,14 @@ test:
   command: --reporter mocha-jenkins-reporter
 
 nginx:
-  image: nginx 
+  build: .
+  dockerfile: Dockerfile.nginx
   links:
     - app 
-  volumes:
-    - ./todobackend.conf:/etc/nginx/conf.d/todobackend.conf
-#  expose:
-   # - "80"
-  #  - "8000"
+ # volumes:
+ #   - ./todobackend.conf:/etc/nginx/conf.d/todobackend.conf
   ports:
     - "8000:8000"
- #   - "80:8080"
   volumes_from:
     - webroot
 
@@ -63,7 +60,7 @@ db:
     MYSQL_ROOT_PASSWORD: password
 
 agent:
-  image: faten/ansible
+  image: fatenhrs/ansible
  # volumes:
  #   - ../../ansible/probe.yml:/ansible/site.yml
   links:
@@ -71,3 +68,4 @@ agent:
   environment:
     PROBE_HOST: "db"
     PROBE_PORT: "3306"
+  command: ["probe.yml"]
